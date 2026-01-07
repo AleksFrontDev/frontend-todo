@@ -1,0 +1,153 @@
+<div class="task-manager">
+  <header class="header">
+    <h1>📋 Менеджер задач</h1>
+    <p class="subtitle">Управление списком дел</p>
+  </header>
+
+  @if (errorMessage) {
+    <div class="error-message">
+      {{errorMessage}}
+      <button class="close-btn" (click)="errorMessage = ''">
+        ×
+      </button>
+    </div>
+  }
+
+  <div class="create-form">
+    <input
+      type="text"
+      [(ngModel)]="newTaskTitle"
+      placeholder="Что нужно сделать?"
+      (keyup.enter)="createTask()"
+      class="task-input"
+    />
+    <button
+      (click)="createTask()"
+      class="btn btn-primary"
+      [disabled]="!newTaskTitle.trim()"
+    >
+      ➕ Добавить
+    </button>
+  </div>
+
+  @if(loading) {
+    <div class="loading">
+      Загрузка задач...
+    </div>
+  }
+
+  @if(!loading) {
+
+    @if(tasks.length === 0) {
+      <div class="empty-state">
+        📭 Список задач пуст. Добавьте первую задачу!
+      </div>
+    }
+
+    @if(tasks.length > 0) {
+      <div class="tasks-container">
+        <div class="stats">
+          <span class="stat">
+            Всего:
+            <strong>
+              {{totalTasks}}
+            </strong>
+          </span>
+          <span class="stat">
+            Выполнено:
+            <strong>
+              {{completedTasks}}
+            </strong>
+          </span>
+          <span class="stat">
+            Осталось:
+            <strong>
+              {{pendingTasks}}
+            </strong>
+          </span>
+        </div>
+
+        <ul class="task-list">
+
+          @for (task of tasks; track task.id) {
+            <li
+              class="task-item"
+              [ngClass]="getTaskClasses(task.completed)"
+            >
+              <input
+                type="checkbox"
+                [checked]="task.completed"
+                (change)="toggleTask(task.id)"
+                class="task-checkbox"
+              />
+
+              <div class="task-content">
+
+                @if (editingTaskId === task.id) {
+                  <div class="edit-mode">
+                    <input
+                      type="text"
+                      [(ngModel)]="editTaskTitle"
+                      (keyup.enter)="saveEdit(task.id)"
+                      class="edit-input"
+                    />
+                    <div class="edit-actions">
+                      <button (click)="saveEdit(task.id)" class="btn btn-save">
+                        💾 Сохранить
+                      </button>
+                      <button (click)="cancelEdit()" class="btn btn-cancel">
+                        ❌ Отмена
+                      </button>
+                    </div>
+                  </div>
+                } @else {
+                  <div class="view-mode">
+                    <span class="task-title">
+                      {{task.title}}
+                    </span>
+                    <span class="task-date">
+                      📅 {{formatDate(task.createdAt)}}
+                    </span>
+                  </div>
+                }
+              </div>
+
+              @if (editingTaskId !== task.id) {
+                <div class="task-actions">
+                  <button
+                    (click)="startEdit(task)"
+                    class="btn btn-edit"
+                    title="Редактировать"
+                  >
+                    ✏️
+                  </button>
+                  <button
+                    (click)="deleteTask(task.id)"
+                    class="btn btn-delete"
+                    title="Удалить"
+                  >
+                    🗑
+                  </button>
+                </div>
+              }
+            </li>
+          } @empty {
+            <li class="empty-state">
+              📝 Задач пока нет
+            </li>
+          }
+        </ul>
+
+        <div class="refresh-section">
+          <button (click)="loadTasks()" class="btn btn-refresh">
+            🔄 Обновить список
+          </button>
+        </div>
+      </div>
+    }
+  }
+
+  <footer class="footer">
+    <p>Используйте API на Express + Prisma + PostgreSQL</p>
+  </footer>
+</div>
