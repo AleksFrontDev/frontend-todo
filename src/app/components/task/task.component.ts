@@ -5,17 +5,14 @@ import {
 } from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
-import {TaskService} from './services/task.service';
-import {
-  Task,
-  CreateTask,
-  UpdateTask
-} from '../app/models/task.interface';
+import { Task, CreateTask, UpdateTask } from '../../models/task.interface';
+import { TaskService } from '../../services/task.service';
+import { LoginComponent } from "../login/login.component";
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoginComponent],
   templateUrl: './task.component.html',
   styleUrls: ['./styles/task.component.css'],
 })

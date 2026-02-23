@@ -1,0 +1,66 @@
+<div class="login-container">
+  <div class="login-card">
+    <div class="login-header">
+      <h2>Добро пожаловать!</h2>
+      <p class="subtitle">Войдите в свой аккаунт</p>
+    </div>
+
+    <div class="login-body">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input
+            type="email"
+            class="form-control"
+            formControlName="email"
+            placeholder="example@mail.com"
+            [class.is-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+          >
+
+          <div class="error-message" *ngIf="loginForm.get('email')?.errors?.['required'] && loginForm.get('email')?.touched">
+            Email обязателен
+          </div>
+          <div class="error-message" *ngIf="loginForm.get('email')?.errors?.['email'] && loginForm.get('email')?.touched">
+            Введите корректный email
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Пароль</label>
+          <input
+            type="password"
+            class="form-control"
+            formControlName="password"
+            placeholder="••••••••"
+            [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+          >
+
+          <div class="error-message" *ngIf="loginForm.get('password')?.errors?.['required'] && loginForm.get('password')?.touched">
+            Пароль обязателен
+          </div>
+        </div>
+
+        <div class="alert alert-error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-primary btn-block"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          <span *ngIf="!isLoading">Войти</span>
+          <span *ngIf="isLoading" class="loading-spinner">
+            <span class="spinner"></span> Вход...
+          </span>
+        </button>
+
+        <div class="register-link">
+          Нет аккаунта? <a routerLink="/register" class="link">Зарегистрироваться</a>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
