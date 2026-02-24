@@ -7,17 +7,21 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import { Task, CreateTask, UpdateTask } from '../../models/task.interface';
 import { TaskService } from '../../services/task.service';
-import { LoginComponent } from "../login/login.component";
+import { RegistrationComponent } from '../registration/registration.component';
+import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-task-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoginComponent],
+  imports: [CommonModule, FormsModule, RegistrationComponent],
   templateUrl: './task.component.html',
   styleUrls: ['./styles/task.component.css'],
 })
 export class TaskListComponent implements OnInit {
   private taskService = inject(TaskService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   tasks: Task[] = [];
   newTaskTitle = '';
@@ -28,8 +32,13 @@ export class TaskListComponent implements OnInit {
   totalTasks = 0;
   completedTasks = 0;
   pendingTasks = 0;
+  userEmail: string | null = null;
 
   ngOnInit(): void {
+    this.authService.user$.subscribe((user) => {
+      this.userEmail = user?.email || null;
+    });
+
     this.loadTasks();
   }
 
@@ -47,13 +56,13 @@ export class TaskListComponent implements OnInit {
         this.errorMessage = 'Не удалось загрузить задачи: ' + error.message;
         this.loading = false;
         console.error('Ошибка загрузки задач:', error);
-      }
+      },
     });
   }
 
   calculateStats(): void {
     this.totalTasks = this.tasks.length;
-    this.completedTasks = this.tasks.filter(t => t.completed).length;
+    this.completedTasks = this.tasks.filter((t) => t.completed).length;
     this.pendingTasks = this.totalTasks - this.completedTasks;
   }
 
@@ -65,7 +74,7 @@ export class TaskListComponent implements OnInit {
 
     const newTask: CreateTask = {
       title: this.newTaskTitle.trim(),
-      completed: false
+      completed: false,
     };
 
     this.taskService.createTask(newTask).subscribe({
@@ -77,14 +86,14 @@ export class TaskListComponent implements OnInit {
       },
       error: (error: any) => {
         this.errorMessage = 'Не удалось создать задачу: ' + error.message;
-      }
+      },
     });
   }
 
   toggleTask(id: number): void {
     this.taskService.toggleTask(id).subscribe({
       next: (updatedTask: any) => {
-        const index = this.tasks.findIndex(task => task.id === id);
+        const index = this.tasks.findIndex((task) => task.id === id);
         if (index !== -1) {
           this.tasks[index] = updatedTask;
           this.calculateStats();
@@ -92,7 +101,7 @@ export class TaskListComponent implements OnInit {
       },
       error: (error: any) => {
         this.errorMessage = 'Не удалось обновить задачу: ' + error.message;
-      }
+      },
     });
   }
 
@@ -108,12 +117,12 @@ export class TaskListComponent implements OnInit {
     }
 
     const updateData: UpdateTask = {
-      title: this.editTaskTitle.trim()
+      title: this.editTaskTitle.trim(),
     };
 
     this.taskService.updateTask(id, updateData).subscribe({
       next: (updatedTask: any) => {
-        const index = this.tasks.findIndex(task => task.id === id);
+        const index = this.tasks.findIndex((task) => task.id === id);
         if (index !== -1) {
           this.tasks[index] = updatedTask;
         }
@@ -122,7 +131,7 @@ export class TaskListComponent implements OnInit {
       },
       error: (error: any) => {
         this.errorMessage = 'Не удалось обновить задачу: ' + error.message;
-      }
+      },
     });
   }
 
@@ -138,20 +147,20 @@ export class TaskListComponent implements OnInit {
 
     this.taskService.deleteTask(id).subscribe({
       next: () => {
-        this.tasks = this.tasks.filter(task => task.id !== id);
+        this.tasks = this.tasks.filter((task) => task.id !== id);
         this.calculateStats();
         this.errorMessage = '';
       },
       error: (error: any) => {
         this.errorMessage = 'Не удалось удалить задачу: ' + error.message;
-      }
+      },
     });
   }
 
   getTaskClasses(completed: boolean): any {
     return {
-      'completed': completed,
-      'pending': !completed
+      completed: completed,
+      pending: !completed,
     };
   }
 
@@ -161,7 +170,12 @@ export class TaskListComponent implements OnInit {
       minute: '2-digit',
       day: '2-digit',
       month: '2-digit',
-      year: 'numeric'
+      year: 'numeric',
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

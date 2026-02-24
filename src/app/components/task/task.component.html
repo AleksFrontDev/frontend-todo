@@ -1,10 +1,24 @@
-<app-login></app-login>
-
 <div class="task-manager">
   <header class="header">
+  <div class="header-top">
     <h1>📋 Менеджер задач</h1>
-    <p class="subtitle">Управление списком дел</p>
-  </header>
+    <div class="user-info">
+      @if (userEmail) {
+        <span class="user-email">
+          👤 {{ userEmail }}
+        </span>
+        <button
+          (click)="logout()"
+          class="btn btn-logout"
+          title="Выйти"
+        >
+          🚪 Выйти
+        </button>
+      }
+    </div>
+  </div>
+  <p class="subtitle">Управление списком дел</p>
+</header>
 
   @if (errorMessage) {
     <div class="error-message">
@@ -148,8 +162,4 @@
       </div>
     }
   }
-
-  <footer class="footer">
-    <p>Используйте API на Express + Prisma + PostgreSQL</p>
-  </footer>
 </div>

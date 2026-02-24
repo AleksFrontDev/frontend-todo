@@ -1,6 +1,6 @@
 import { bootstrapApplication } from '@angular/platform-browser';
-import { TaskListComponent } from './app/components/task/task.component';
-import { taskConfig } from './app/task.config';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
 
-bootstrapApplication(TaskListComponent, taskConfig)
+bootstrapApplication(AppComponent, appConfig)
   .catch((err) => console.error(err));
