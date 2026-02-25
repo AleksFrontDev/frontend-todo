@@ -7,12 +7,13 @@ import {
   RegisterRequest,
   User,
 } from '../models/user.interface';
+import { environment } from '../../environments/environments';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   private tokenKey = 'token';
   private userKey = 'user';
