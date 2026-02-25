@@ -7,7 +7,7 @@ import {
   RegisterRequest,
   User,
 } from '../models/user.interface';
-import { environment } from '../../environments/environments';
+import { environment } from '../../environments/environment'
 
 @Injectable({
   providedIn: 'root',
